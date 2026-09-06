@@ -1,0 +1,106 @@
+Metadata-Version: 2.4
+Name: azure-cost-guard
+Version: 0.1.0
+Summary: CLI tool for detecting billing anomalies in Azure cost data.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: typer>=0.9.0
+Requires-Dist: azure-identity>=1.15.0
+Requires-Dist: azure-mgmt-costmanagement>=4.0.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: statsmodels>=0.14.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: pydantic>=2.4.0
+Requires-Dist: pyyaml>=6.0.1
+Provides-Extra: test
+Requires-Dist: pytest>=7.0.0; extra == "test"
+
+# Azure Cost Guard
+
+Azure Cost Guard is a Python CLI tool designed to automatically detect billing anomalies and unexpected spikes in your Azure cost data. 
+
+## Problem Statement
+Cloud costs can quickly spiral out of control due to misconfigurations, unexpected scaling, or runaway processes. Often, by the time the monthly bill arrives, the damage is already done. Azure Cost Guard monitors your daily Azure spending, detecting unusual spikes compared to your historical baseline and alerting you immediately via Slack or Email.
+
+## Architecture
+
+```mermaid
+graph TD
+    A[Azure Cost Management API] -->|Daily Costs| B(fetch)
+    B -->|Caches to CSV| C(cost_data.csv)
+    C -->|Reads History| D(analyze)
+    D -->|Simple/Seasonal Mode| E{Anomaly Detected?}
+    E -->|Yes| F(alert)
+    F -->|Webhook| G[Slack]
+    F -->|SMTP| H[Email]
+    I[watch] -.->|Interval Loop| B
+```
+
+## Statistical Methods
+
+Azure Cost Guard supports two modes for anomaly detection:
+
+### Simple Mode (Rolling Mean + Standard Deviation)
+This mode calculates a rolling average of your costs over the past week. It then measures how much the current day's cost deviates from that average, using Standard Deviation (a measure of typical variation). If the current day is significantly higher than usual (e.g., more than 3 standard deviations away), it flags an anomaly. 
+*Best for: Accounts with consistent, stable daily costs.*
+
+### Seasonal Mode (STL Decomposition)
+Cloud usage often drops on weekends and spikes on weekdays. The Seasonal mode uses STL (Seasonal and Trend decomposition using Loess) to separate out these weekly patterns. By removing the expected weekend dip, it only looks for anomalies in the remaining "unexpected" cost variation.
+*Best for: Accounts with strong weekly usage patterns.*
+
+## Installation
+
+Ensure you have Python 3.11+ installed.
+
+```bash
+git clone https://github.com/yourusername/azure-cost-guard.git
+cd azure-cost-guard
+pip install -e .
+```
+
+## Setup & Configuration
+
+Initialize the configuration file:
+```bash
+azure-cost-guard init
+```
+This creates a `config.yaml`. Fill in your `azure_subscription_id` and alert destinations (Slack webhook or SMTP).
+
+Make sure you are authenticated with Azure using DefaultAzureCredential (e.g., `az login` or environment variables).
+
+## Usage
+
+**Fetch Data:**
+```bash
+azure-cost-guard fetch --days 30
+```
+
+**Analyze Data:**
+```bash
+azure-cost-guard analyze --mode simple
+```
+
+**Send Alerts:**
+```bash
+azure-cost-guard alert --mode seasonal
+```
+
+**Continuous Monitoring:**
+```bash
+azure-cost-guard watch --mode seasonal
+```
+
+## Demo Mode
+
+You can run the tool in a demo mode without any Azure credentials. This uses synthetic data with known cost spikes to demonstrate the detection and alerting capabilities.
+
+```bash
+azure-cost-guard analyze --demo
+```
+
+### Demo Output
+![Demo Output Placeholder](docs/demo_output.png)
+
+### Demo GIF
+![Demo GIF Placeholder](docs/demo_animation.gif)

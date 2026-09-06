@@ -1,0 +1,12 @@
+typer>=0.9.0
+azure-identity>=1.15.0
+azure-mgmt-costmanagement>=4.0.0
+pandas>=2.0.0
+statsmodels>=0.14.0
+rich>=13.0.0
+requests>=2.31.0
+pydantic>=2.4.0
+pyyaml>=6.0.1
+
+[test]
+pytest>=7.0.0

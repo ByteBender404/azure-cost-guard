@@ -1,0 +1,2 @@
+[console_scripts]
+azure-cost-guard = azure_cost_guard.cli:app
