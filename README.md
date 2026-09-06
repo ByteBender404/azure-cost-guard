@@ -81,7 +81,7 @@ Azure Cost Guard supports two modes for anomaly detection, both relying on stati
 Ensure you have Python 3.11+ installed.
 
 ```bash
-git clone https://github.com/yourusername/azure-cost-guard.git
+git clone https://github.com/ByteBender404/azure-cost-guard.git
 cd azure-cost-guard
 pip install -e .
 ```
