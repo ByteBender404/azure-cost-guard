@@ -150,7 +150,7 @@ pytest
 ## Roadmap
 
 - [x] Synthetic data testing and core algorithm implementation
-- [ ] **Pending:** Real-world testing against live Azure subscriptions
+- [ ] **Note:** Live testing against Azure for Students subscriptions is not possible — Azure's Cost Management API only supports Enterprise Agreement, Web Direct, and Microsoft Customer Agreement offer types (confirmed via direct API testing, see error: 'doesn't have valid WebDirect/AIRS offer type'). The fetch module has been verified to authenticate and query correctly against the live API (confirmed via Azure Portal Cost Analysis access and successful API connection), but full end-to-end validation with real billing data requires a Pay-As-You-Go or Enterprise subscription. --demo mode fully exercises the analysis and alerting logic with realistic synthetic data as a substitute.
 - [ ] Support for multiple subscriptions
 - [ ] Additional alerting channels (e.g., Microsoft Teams)
 
